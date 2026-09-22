@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" rx="24" fill="#EDE8E4"/>
+  <rect x="66" y="34" width="68" height="18" rx="6" fill="#774E32"/>
+  <path d="M62 52h76c6 0 10 5 9 11l-11 106c-1 9-9 16-18 16H82c-9 0-17-7-18-16L53 63c-1-6 3-11 9-11Z" fill="#774E32"/>
+  <rect x="56" y="104" width="88" height="46" fill="#EDE8E4"/>
+  <text x="100" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="1" fill="#253754">YOGUR</text>
+  <text x="100" y="141" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" letter-spacing="2" fill="#774E32">MORA</text>
+  <circle cx="100" cy="172" r="3" fill="#D89C6C"/>
+</svg>
