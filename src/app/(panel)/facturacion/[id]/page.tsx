@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { toast } from "sonner"
@@ -75,9 +76,13 @@ export default function FacturaDetailPage() {
         <CardContent className="space-y-8 px-0">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <span className="flex size-11 items-center justify-center rounded-full bg-navy text-sm font-bold text-cream">
-                RL
-              </span>
+              <Image
+                src="/logo.jpeg"
+                alt="RacLact"
+                width={44}
+                height={44}
+                className="size-11 rounded-full bg-white object-cover ring-1 ring-border"
+              />
               <div>
                 <p className="font-heading text-base font-bold tracking-wide text-navy uppercase dark:text-cream">RacLact S.A.S.</p>
                 <p className="text-xs text-muted-foreground">NIT 900.123.456-7 · Km 3 vía Yumbo, Valle del Cauca</p>

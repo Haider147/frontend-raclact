@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
@@ -39,9 +40,14 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r-0">
       <SidebarHeader className="gap-3 px-3 py-4">
         <Link href="/" className="flex items-center gap-3 px-1">
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-sm font-bold text-navy">
-            RL
-          </span>
+          <Image
+            src="/logo.jpeg"
+            alt="RacLact"
+            width={36}
+            height={36}
+            priority
+            className="size-9 shrink-0 rounded-full bg-white object-cover"
+          />
           <span className="flex flex-col leading-none group-data-[collapsible=icon]:hidden">
             <span className="font-heading text-sm font-bold tracking-wide text-cream uppercase">
               RacLact

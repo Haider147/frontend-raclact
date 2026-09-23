@@ -1,3 +1,4 @@
+import Image from "next/image"
 import type { ReactNode } from "react"
 import { BrandBlob } from "@/components/shared/brand-blob"
 
@@ -19,15 +20,14 @@ export function AuthShell({ children }: { children: ReactNode }) {
           className="pointer-events-none absolute -bottom-44 -left-28 size-[400px] text-copper/25"
         />
         <div className="relative z-10 flex flex-col items-center gap-6 px-10 text-center">
-          <span className="flex size-16 items-center justify-center rounded-full bg-white text-lg font-bold text-navy">
-            RL
-          </span>
-          <div className="space-y-2">
-            <p className="font-heading text-2xl font-semibold tracking-wide text-cream uppercase">
-              RacLact
-            </p>
-            <p className="max-w-xs text-sm text-cream/70">Yogur que te hace bien</p>
-          </div>
+          <Image
+            src="/logo.jpeg"
+            alt="RacLact — Yogur que te hace bien"
+            width={183}
+            height={198}
+            priority
+            className="size-48 rounded-full bg-white object-cover shadow-lg"
+          />
         </div>
       </div>
     </div>
