@@ -4,16 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useRouter, usePathname } from "next/navigation"
 import { useTheme } from "next-themes"
-import {
-  Bell,
-  LogOut,
-  Moon,
-  Search,
-  Settings,
-  Sun,
-  SunMoon,
-  User,
-} from "lucide-react"
+import { LogOut, Moon, Search, Sun, SunMoon } from "lucide-react"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -23,7 +14,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
@@ -45,29 +35,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
 import { SidebarTrigger } from "@/components/ui/sidebar"
-import { EmptyState } from "@/components/shared/empty-state"
 import { getBreadcrumbs, navGroupsForRole } from "@/components/layout/nav-config"
-import { usePanelRole } from "@/components/providers/panel-role-provider"
-import { panelRoleMeta } from "@/lib/panel-role"
-import { formatRelative } from "@/lib/format"
-import { notifications as initialNotifications } from "@/mocks/notifications"
+import { useAuth } from "@/components/providers/auth-provider"
+import { roleLabels } from "@/lib/session"
 
 export function Topbar() {
   const pathname = usePathname()
   const router = useRouter()
-  const { role } = usePanelRole()
+  const { user } = useAuth()
   const crumbs = useMemo(() => getBreadcrumbs(pathname), [pathname])
-  const visibleNavGroups = useMemo(() => navGroupsForRole(role), [role])
+  const visibleNavGroups = useMemo(() => (user ? navGroupsForRole(user.role) : []), [user])
 
   const [commandOpen, setCommandOpen] = useState(false)
-  const [notifications, setNotifications] = useState(initialNotifications)
-  const unreadCount = notifications.filter((n) => !n.readAt).length
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -83,12 +63,6 @@ export function Topbar() {
   function goTo(href: string) {
     setCommandOpen(false)
     router.push(href)
-  }
-
-  function markAllRead() {
-    setNotifications((prev) =>
-      prev.map((n) => (n.readAt ? n : { ...n, readAt: new Date().toISOString() }))
-    )
   }
 
   return (
@@ -138,69 +112,6 @@ export function Topbar() {
         >
           <Search strokeWidth={1.75} />
         </Button>
-
-        <Popover>
-          <PopoverTrigger
-            render={
-              <Button variant="ghost" size="icon-sm" aria-label="Notificaciones" className="relative" />
-            }
-          >
-            <Bell strokeWidth={1.75} />
-            {unreadCount > 0 ? (
-              <Badge className="absolute -top-1 -right-1 h-4 min-w-4 justify-center px-1 text-[10px]">
-                {unreadCount}
-              </Badge>
-            ) : null}
-          </PopoverTrigger>
-          <PopoverContent align="end" className="w-80 p-0">
-            <div className="flex items-center justify-between border-b border-border px-3 py-2.5">
-              <p className="font-heading text-sm font-semibold text-navy dark:text-cream">
-                Notificaciones
-              </p>
-              {unreadCount > 0 ? (
-                <button
-                  type="button"
-                  onClick={markAllRead}
-                  className="text-xs font-medium text-copper hover:underline"
-                >
-                  Marcar todas como leídas
-                </button>
-              ) : null}
-            </div>
-            <div className="max-h-80 overflow-y-auto">
-              {notifications.length === 0 ? (
-                <EmptyState
-                  icon={Bell}
-                  title="Sin notificaciones"
-                  description="Aquí verás la actividad reciente del panel."
-                  className="border-0 py-10"
-                />
-              ) : (
-                notifications.map((n) => (
-                  <Link
-                    key={n.id}
-                    href={n.href ?? "#"}
-                    className="flex gap-2.5 border-b border-border/60 px-3 py-2.5 text-sm last:border-0 hover:bg-muted/60"
-                  >
-                    <span
-                      className={
-                        "mt-1.5 size-1.5 shrink-0 rounded-full " +
-                        (n.readAt ? "bg-transparent" : "bg-copper")
-                      }
-                    />
-                    <div className="min-w-0 space-y-0.5">
-                      <p className="font-medium text-foreground">{n.title}</p>
-                      <p className="line-clamp-2 text-xs text-muted-foreground">{n.body}</p>
-                      <p className="text-[11px] text-muted-foreground/80">
-                        {formatRelative(n.createdAt)}
-                      </p>
-                    </div>
-                  </Link>
-                ))
-              )}
-            </div>
-          </PopoverContent>
-        </Popover>
 
         <ThemeMenu />
 
@@ -263,14 +174,21 @@ function ThemeMenu() {
 }
 
 function UserMenu() {
-  const { role } = usePanelRole()
-  const meta = panelRoleMeta[role]
-  const initials = meta.displayName
+  const router = useRouter()
+  const { user, logout } = useAuth()
+  if (!user) return null
+
+  const initials = user.name
     .split(" ")
     .map((part) => part[0])
     .slice(0, 2)
     .join("")
     .toUpperCase()
+
+  async function handleLogout() {
+    await logout()
+    router.replace("/login")
+  }
 
   return (
     <DropdownMenu>
@@ -284,23 +202,14 @@ function UserMenu() {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuGroup>
           <DropdownMenuLabel className="flex flex-col gap-0 py-1.5">
-            <span className="text-sm font-medium text-foreground">{meta.displayName}</span>
+            <span className="text-sm font-medium text-foreground">{user.name}</span>
             <span className="text-xs font-normal text-muted-foreground">
-              {meta.label} · {meta.email}
+              {roleLabels[user.role]} · {user.email}
             </span>
           </DropdownMenuLabel>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem render={<Link href="/ajustes" />}>
-          <User className="size-4" strokeWidth={1.75} />
-          Mi perfil
-        </DropdownMenuItem>
-        <DropdownMenuItem render={<Link href="/ajustes" />}>
-          <Settings className="size-4" strokeWidth={1.75} />
-          Ajustes
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" render={<Link href="/login" />}>
+        <DropdownMenuItem variant="destructive" onClick={handleLogout}>
           <LogOut className="size-4" strokeWidth={1.75} />
           Cerrar sesión
         </DropdownMenuItem>

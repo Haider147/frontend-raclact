@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Inter, Plus_Jakarta_Sans } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
-import { PanelRoleProvider } from "@/components/providers/panel-role-provider"
+import { AuthProvider } from "@/components/providers/auth-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
@@ -44,12 +44,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <PanelRoleProvider>
+          <AuthProvider>
             <TooltipProvider delay={300}>
               {children}
               <Toaster />
             </TooltipProvider>
-          </PanelRoleProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

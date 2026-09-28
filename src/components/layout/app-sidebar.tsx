@@ -17,7 +17,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { navGroups, navGroupsForRole, type NavItem } from "@/components/layout/nav-config"
-import { usePanelRole } from "@/components/providers/panel-role-provider"
+import { useAuth } from "@/components/providers/auth-provider"
 
 const allItems: NavItem[] = navGroups.flatMap((group) => group.items)
 
@@ -33,8 +33,8 @@ function isActiveHref(pathname: string, href: string): boolean {
 
 export function AppSidebar() {
   const pathname = usePathname()
-  const { role } = usePanelRole()
-  const groups = navGroupsForRole(role)
+  const { user } = useAuth()
+  const groups = user ? navGroupsForRole(user.role) : []
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
